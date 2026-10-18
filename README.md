@@ -11,7 +11,9 @@
 
 <br/>
 
-<img src="./sc/pet_mode.png" alt="Kyo Pet" width="380" />
+<img src="./sc/gambar-utama-pet.png" alt="Kyo Pet Mode" width="750" />
+
+*🐾 Kyo Living Mascot: Profil ultra-slim 24px, nempel rapi di bezel monitor tanpa nutupin tab browser.*
 
 **[🚀 Live Web Demo](https://dynamic-island-win.vercel.app)** • **[☕ Saweria](https://saweria.co/kyoajh)**
 
@@ -21,32 +23,32 @@
 
 ## ❄️ Apaan ini?
 
-Gue bikin notch Dynamic Island buat Windows yang beneran fungsional, estetik, dan gak bikin laptop lu ngos-ngosan. Gak ada border norak, gak nutupin tab browser lu, responsif parah, dan auto-hidden pas lu klik di luar.
+Gue bikin notch Dynamic Island buat Windows yang beneran fungsional, estetik, dan gak bikin laptop lu ngos-ngosan. Gak ada border norak, gak nutupin tombol minimize app lain, responsif parah, dan auto-hidden pas lu klik di luar.
 
 - **RAM Cuma ~60MB.** Nyaris gak berasa jalan di background.
-- **Tinggi cuma 24px.** Ramping, gak bakal nutupin tombol close / minimize app lain.
-- **Auto-Detect Everything.** Musik lokal, Spotify, YouTube, notifikasi WA/Telegram, sampe charger dicolok.
+- **Tinggi cuma 24px.** Ramping, gak bakal nutupin tab browser lu.
+- **Auto-Detect Everything.** Musik lokal (AIMP, Foobar, VLC), Spotify, YouTube, notifikasi WA/Telegram, sampe charger dicolok.
 
 ---
 
-## 🥶 Visual Setup (Cold UI)
+## 🥶 Visual Setup (Cold UI Gallery)
 
-| 🎵 Now Playing (Lokal & Stream) | ⏱ Focus Pomodoro |
+| 🎵 Now Playing (Lokal & Streaming) | 💬 Live Notification Sniffer |
 | :---: | :---: |
-| <img src="./sc/music_mode.png" width="440" alt="Music" /> | <img src="./sc/focus_mode.png" width="440" alt="Focus" /> |
-| *Support Spotify, YT, AIMP, VLC, Foobar2000, Winamp* | *Timer 25 menit. Arc bar jalan mulus 60 FPS* |
+| <img src="./sc/media-session.png" width="460" alt="Now Playing" /> | <img src="./sc/chat-notification.png" width="460" alt="Notification" /> |
+| *Auto-detect Spotify, YT, AIMP, VLC, Foobar2000* | *Muncul instan nama pengirim + isi chat lengkap* |
 
-| 💧 Water Tracker | 📁 Quick Shelf |
+| ⏱ Focus / Pomodoro Timer | 💧 Water Reminder |
 | :---: | :---: |
-| <img src="./sc/water_mode.png" width="440" alt="Water" /> | <img src="./sc/shelf_mode.png" width="440" alt="Shelf" /> |
-| *Biar lu gak dehidrasi pas ngoding / kerja* | *Tinggal lempar file ke notch, langsung nempel* |
+| <img src="./sc/Focus-timer.png" width="460" alt="Focus Timer" /> | <img src="./sc/water-reminder.png" width="460" alt="Water Reminder" /> |
+| *Timer 25 menit. Arc bar jalan mulus 60 FPS* | *Target minum harian biar lu gak dehidrasi* |
 
 <div align="center">
 
-### ⚡ Battery & Fast Charging HUD
-<img src="./sc/battery_mode.png" width="400" alt="Battery" />
+### 📁 Quick File Shelf
+<img src="./sc/quick-file-shelf.png" width="600" alt="Quick Shelf" />
 
-*Indikator charging jalan otomatis pas kabel dicolok atau dicabut.*
+*Tinggal drag & drop file apapun dari Explorer ke notch, langsung nempel.*
 
 </div>
 
@@ -54,12 +56,12 @@ Gue bikin notch Dynamic Island buat Windows yang beneran fungsional, estetik, da
 
 ## ⚡ Fitur Utama
 
-- **🐾 Living Mascot**: Si Kyo ngedip berkala, pupil matanya ngikutin kursor mouse lu.
+- **🐾 Living Mascot**: Si Kyo ngedip berkala, pupil matanya ngikutin kursor mouse lu secara organik.
 - **💬 Full Notification Sniffer**: Begitu ada chat WA / Telegram / Browser masuk, notch langsung nampilin **Pengirim + Isi Pesan Lengkap**, bukan cuma icon doang.
 - **🎵 Dual-Engine Media Detection**:
   - Cloud: Spotify, Apple Music, YouTube di Chrome/Edge.
   - Lokal: AIMP, Foobar2000, VLC, Winamp, PotPlayer, MPC-HC, MusicBee.
-- **🪄 Auto-Hidden**: Klik di luar notch? Langsung ngumpet otomatis jadi kapsul mini.
+- **🪄 Auto-Hidden**: Klik di luar notch? Langsung ngumpet otomatis jadi kapsul mini 24px.
 - **🚀 Auto-Start**: Begitu Windows nyala, Kyo langsung standby di atas.
 
 ---
