@@ -1,508 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Kyo Island: a living natural notch for Windows</title>
-  <meta name="description" content="Kyo turns the top edge of your Windows screen into a sleek, living notch for music, live notifications, focus timers, water reminders, and files.">
-  <meta property="og:title" content="Kyo Island: a living natural notch for Windows">
-  <meta property="og:description" content="Music, live synced notifications, focus timer, water reminder and file shelf, naturally integrated at the top of your screen.">
-  <meta property="og:url" content="https://dynamic-island-win.vercel.app">
-  <meta name="twitter:card" content="summary_large_image">
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      color-scheme: dark;
-      --void: #06090c;
-      --panel: #0d1217;
-      --card: rgba(18, 25, 32, 0.7);
-      --ink: #eef5f2;
-      --mist: #889e95;
-      --line: rgba(255, 255, 255, 0.08);
-      --emerald: #00f5a0;
-      --cyan: #00d9f5;
-      --blue: #2e78ff;
-      --glow: linear-gradient(90deg, var(--emerald), var(--cyan) 50%, var(--blue));
-      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      --spring: cubic-bezier(0.34, 1.3, 0.5, 1);
-    }
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--void);
-      color: var(--ink);
-      font-family: var(--font);
-      font-size: 17px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kyo Island: notch hidup untuk layar Windows</title>
+<meta name="description" content="Kyo Island mengubah tepi atas layar Windows jadi notch yang hidup: musik, notifikasi, timer fokus, pengingat minum, dan rak file.">
+<meta property="og:title" content="Kyo Island: notch hidup untuk layar Windows">
+<meta property="og:description" content="Musik, notifikasi langsung, timer fokus, pengingat minum, dan rak file di tepi atas layar.">
+<meta property="og:url" content="https://dynamic-island-win.vercel.app">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1e8; --bg2:#e9eddf; --surface:#fbf9f3; --ink:#1d2b21; --mute:#5f6e63; --line:#d8dccb;
+  --acc:#2f7d4f; --acc-ink:#fbf9f3; --glow:rgba(47,125,79,.25);
+  --head:'Bricolage Grotesque',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1a231e; --bg2:#222d27; --surface:#202a24; --ink:#eef1e6; --mute:#9aaa9f; --line:#32403a;
+  --acc:#8fd9a2; --acc-ink:#12201a; --glow:rgba(143,217,162,.3); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#1a231e; --bg2:#222d27; --surface:#202a24; --ink:#eef1e6; --mute:#9aaa9f; --line:#32403a;
+  --acc:#8fd9a2; --acc-ink:#12201a; --glow:rgba(143,217,162,.3); color-scheme:dark;}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:inherit;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--head);font-size:17px;line-height:1.6;overflow-x:hidden;transition:background .3s,color .3s}
+a{color:inherit}
+.wrap{width:min(1080px,100% - 40px);margin-inline:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+.logo{font-weight:800;font-size:19px;text-decoration:none;letter-spacing:-.02em}
+.logo i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--acc);margin-right:9px}
+nav{display:flex;gap:20px;align-items:center;font-size:15px}
+nav a{text-decoration:none;color:var(--mute)}nav a:hover{color:var(--ink)}
+#theme{font:inherit;font-size:13px;font-family:var(--mono);padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+#theme:hover{border-color:var(--acc)}
 
-    /* Ambient background grid & glow */
-    .bg-glow {
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1000px;
-      height: 500px;
-      background: radial-gradient(ellipse at top, rgba(0, 245, 160, 0.15), rgba(0, 217, 245, 0.08) 40%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
+.hero{padding:60px 0 56px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:end}
+.tag{font-family:var(--mono);font-size:13px;color:var(--acc);margin-bottom:22px;display:block}
+h1{font-size:clamp(40px,6.2vw,80px);line-height:.98;letter-spacing:-.04em;font-weight:800}
+h1 em{font-style:normal;color:var(--acc)}
+.hero p{color:var(--mute);margin-bottom:26px;max-width:30em}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{padding:13px 22px;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--line);background:var(--surface);transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.p{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.meta{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:18px}
 
-    .wrap {
-      width: min(1120px, 100% - 48px);
-      margin-inline: auto;
-      position: relative;
-      z-index: 2;
-    }
+/* demo (sesuai desain awal) */
+.preview{background:var(--bg2);border:1px solid var(--line);border-radius:28px;padding:40px 24px 32px;text-align:center;overflow:hidden}
+.preview-top{display:flex;justify-content:center}
+.web-notch{width:180px;height:40px;background:#090c0f;border-radius:0 0 20px 20px;border-bottom:2px solid #00f5a0;
+  box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 20px rgba(0,245,160,.25);display:flex;justify-content:center;align-items:center;
+  cursor:pointer;transition:all .45s cubic-bezier(.34,1.3,.5,1);color:#fff}
+.eyes{display:flex;gap:24px}
+.eye{width:9px;height:15px;background:#fff;border-radius:5px;box-shadow:0 0 8px rgba(0,245,160,.8);animation:bl 3.6s infinite}
+@keyframes bl{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+.web-notch:hover,.web-notch.expanded{width:min(440px,100%);height:120px;border-radius:0 0 26px 26px;padding:20px;justify-content:space-between}
+.exp{display:none;width:100%;height:100%;align-items:center;gap:16px}
+.web-notch:hover .exp,.web-notch.expanded .exp{display:flex}
+.web-notch:hover .eyes,.web-notch.expanded .eyes{display:none}
+.vinyl{width:58px;height:58px;flex:none;border-radius:50%;background:radial-gradient(circle,#090c0f 25%,#00f5a0 30%,#00d9f5 70%);animation:sp 5s linear infinite;box-shadow:0 0 14px rgba(0,245,160,.4)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.mm{flex:1;text-align:left}
+.mm h4{font-size:15px;color:#fff;margin-bottom:4px}
+.mm p{font-size:13px;color:#8fa59a}
+.hint{margin-top:36px;color:var(--mute);font-size:14px}
 
-    /* Navbar */
-    header {
-      padding: 24px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--line);
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 800;
-      font-size: 20px;
-      text-decoration: none;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-    }
-    .logo-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: var(--glow);
-      display: grid;
-      place-items: center;
-      font-size: 16px;
-    }
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    nav a {
-      color: var(--mist);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 15px;
-      transition: color 0.2s;
-    }
-    nav a:hover {
-      color: var(--ink);
-    }
-    .btn-saweria-nav {
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: rgba(227, 160, 8, 0.15);
-      color: #ffd043;
-      border: 1px solid rgba(227, 160, 8, 0.3);
-      font-weight: 600;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-    .btn-saweria-nav:hover {
-      background: rgba(227, 160, 8, 0.25);
-      transform: translateY(-1px);
-    }
+/* fitur */
+.feat{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;padding:72px 0;border-top:1px solid var(--line);margin-top:56px}
+.feat h2{font-size:clamp(30px,4vw,46px);line-height:1.05;letter-spacing:-.03em;position:sticky;top:24px;align-self:start}
+.row{display:grid;grid-template-columns:48px 1fr;padding:22px 0;border-bottom:1px solid var(--line)}
+.row:first-child{padding-top:0}
+.row small{font-family:var(--mono);color:var(--acc);font-size:13px;padding-top:6px}
+.row h3{font-size:21px;letter-spacing:-.01em;margin-bottom:4px}
+.row p{color:var(--mute);font-size:16px}
 
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 90px 0 50px;
-    }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      border-radius: 999px;
-      background: rgba(0, 245, 160, 0.1);
-      border: 1px solid rgba(0, 245, 160, 0.25);
-      color: var(--emerald);
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 24px;
-    }
-    .hero h1 {
-      font-size: clamp(40px, 6vw, 76px);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.035em;
-      max-width: 17ch;
-      margin-inline: auto;
-      background: linear-gradient(180deg, #ffffff 30%, var(--mist) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .hero p {
-      font-size: 19px;
-      color: var(--mist);
-      max-width: 36em;
-      margin: 20px auto 36px;
-    }
-    .hero-cta {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .btn-primary {
-      padding: 15px 30px;
-      border-radius: 999px;
-      background: var(--ink);
-      color: #06090c;
-      font-weight: 700;
-      font-size: 16px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 0 30px rgba(0, 245, 160, 0.25);
-      transition: all 0.25s var(--spring);
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 45px rgba(0, 245, 160, 0.45);
-    }
-    .btn-secondary {
-      padding: 15px 28px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--line);
-      color: var(--ink);
-      font-weight: 600;
-      font-size: 16px;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
+.support{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:36px;display:flex;justify-content:space-between;gap:28px;align-items:center;flex-wrap:wrap;margin-bottom:72px}
+.support h2{font-size:28px;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px}
+.support p{color:var(--mute);max-width:34em;font-size:16px}
+.btn.s{background:#e3a008;color:#1c1608;border-color:#e3a008}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mute);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--ink)}
 
-    /* Interactive Notch Preview Canvas */
-    .preview-container {
-      margin-top: 50px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      padding: 40px 24px;
-      box-shadow: 0 25px 60px -20px rgba(0, 0, 0, 0.8);
-      position: relative;
-      overflow: hidden;
-    }
-    .preview-top-bar {
-      display: flex;
-      justify-content: center;
-      position: relative;
-    }
-    
-    /* Live Interactive Notch Element in Web */
-    .web-notch {
-      width: 180px;
-      height: 40px;
-      background: #090c0f;
-      border-radius: 0 0 20px 20px;
-      border-bottom: 2px solid var(--emerald);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 245, 160, 0.25);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 24px;
-      cursor: pointer;
-      transition: all 0.45s var(--spring);
-      position: relative;
-    }
-    .web-eye {
-      width: 9px;
-      height: 15px;
-      background: #fff;
-      border-radius: 5px;
-      box-shadow: 0 0 8px rgba(0, 245, 160, 0.8);
-      animation: eye-blink 3.6s infinite;
-    }
-    @keyframes eye-blink {
-      0%, 90%, 100% { transform: scaleY(1); }
-      95% { transform: scaleY(0.08); }
-    }
-
-    /* Expand state on hover/click */
-    .web-notch:hover, .web-notch.expanded {
-      width: 440px;
-      height: 120px;
-      border-radius: 0 0 26px 26px;
-      padding: 20px;
-      justify-content: space-between;
-    }
-    .web-notch .expanded-content {
-      display: none;
-      width: 100%;
-      height: 100%;
-      align-items: center;
-      gap: 16px;
-    }
-    .web-notch:hover .expanded-content, .web-notch.expanded .expanded-content {
-      display: flex;
-    }
-    .web-notch:hover .eyes-container, .web-notch.expanded .eyes-container {
-      display: none;
-    }
-
-    .vinyl {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #090c0f 25%, #00f5a0 30%, #00d9f5 70%);
-      animation: spin 5s linear infinite;
-      box-shadow: 0 0 14px rgba(0, 245, 160, 0.4);
-    }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    .music-meta {
-      flex: 1;
-      text-align: left;
-    }
-    .music-meta h4 {
-      font-size: 15px;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-    .music-meta p {
-      font-size: 13px;
-      color: var(--mist);
-      margin: 0;
-    }
-
-    /* Feature Grid */
-    .features {
-      padding: 100px 0;
-    }
-    .section-head {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-    .section-head h2 {
-      font-size: 38px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    .section-head p {
-      color: var(--mist);
-      margin-top: 10px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(16px);
-      transition: all 0.3s;
-    }
-    .card:hover {
-      border-color: rgba(0, 245, 160, 0.3);
-      transform: translateY(-4px);
-    }
-    .card-icon {
-      font-size: 32px;
-      margin-bottom: 18px;
-      display: inline-block;
-    }
-    .card h3 {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .card p {
-      color: var(--mist);
-      font-size: 15px;
-    }
-
-    /* Saweria Section */
-    .support-box {
-      margin: 60px 0 120px;
-      background: linear-gradient(135deg, rgba(227, 160, 8, 0.1), rgba(0, 245, 160, 0.05));
-      border: 1px solid rgba(227, 160, 8, 0.3);
-      border-radius: 28px;
-      padding: 50px 30px;
-      text-align: center;
-    }
-    .support-box h2 {
-      font-size: 32px;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-    .support-box p {
-      color: var(--mist);
-      max-width: 32em;
-      margin: 0 auto 28px;
-    }
-    .btn-saweria {
-      padding: 16px 36px;
-      border-radius: 999px;
-      background: #e3a008;
-      color: #000;
-      font-weight: 800;
-      font-size: 17px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 0 35px rgba(227, 160, 8, 0.4);
-      transition: all 0.25s var(--spring);
-    }
-    .btn-saweria:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 50px rgba(227, 160, 8, 0.6);
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--line);
-      padding: 40px 0;
-      text-align: center;
-      color: var(--mist);
-      font-size: 14px;
-    }
-  </style>
+@media(max-width:760px){
+  .hero,.feat{grid-template-columns:1fr;gap:28px}
+  .feat h2{position:static}
+  nav .hide{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
-  <div class="bg-glow"></div>
+<div class="wrap">
+  <header>
+    <a href="#" class="logo"><i></i>Kyo Island</a>
+    <nav>
+      <a class="hide" href="#fitur">Fitur</a>
+      <a class="hide" href="https://github.com/oziajayakan/Dynamic-Island-Win" target="_blank" rel="noopener">GitHub</a>
+      <a class="hide" href="https://saweria.co/kyoajh" target="_blank" rel="noopener">Saweria</a>
+      <button id="theme" type="button" aria-label="Ganti tema terang atau gelap">Gelap</button>
+    </nav>
+  </header>
 
-  <div class="wrap">
-    <header>
-      <a href="#" class="logo">
-        <span class="logo-badge">🌿</span>
-        <span>Kyo Island</span>
-      </a>
-      <nav>
-        <a href="#features">Features</a>
-        <a href="https://github.com/oziajayakan/Dynamic-Island-Win" target="_blank">GitHub</a>
-        <a href="https://saweria.co/kyoajh" target="_blank" class="btn-saweria-nav">
-          ☕ Dukung di Saweria
-        </a>
-      </nav>
-    </header>
-
-    <section class="hero">
-      <div class="hero-badge">
-        <span>✨ Cyber-Natural Dynamic Notch for Windows</span>
+  <section class="hero">
+    <div>
+      <span class="tag">// untuk Windows 10 &amp; 11</span>
+      <h1>Tepi atas layarmu, jadi <em>hidup.</em></h1>
+    </div>
+    <div>
+      <p>Notch kecil yang menampilkan musik, pesan masuk, timer fokus, dan rak file. Ringan, gratis, dan tidak mengganggu pekerjaanmu.</p>
+      <div class="cta">
+        <a class="btn p" href="https://github.com/oziajayakan/Dynamic-Island-Win" target="_blank" rel="noopener">Unduh di GitHub</a>
+        <a class="btn" href="https://saweria.co/kyoajh" target="_blank" rel="noopener">Dukung via Saweria</a>
       </div>
-      <h1>A living, organic notch for your Windows screen.</h1>
-      <p>Transform the top edge of your display into an elegant, tactile notch for music playback, full-message notifications, focus pomodoro, and instant file shelves.</p>
-      
-      <div class="hero-cta">
-        <a href="https://github.com/oziajayakan/Dynamic-Island-Win" target="_blank" class="btn-primary">
-          <span>Download on GitHub</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <a href="https://saweria.co/kyoajh" target="_blank" class="btn-secondary">
-          Dukung via Saweria
-        </a>
-      </div>
+      <div class="meta">~70 MB RAM · open source · lisensi MIT</div>
+    </div>
+  </section>
 
-      <div class="preview-container">
-        <div class="preview-top-bar">
-          <div class="web-notch" id="interactiveNotch" title="Hover me!">
-            <div class="eyes-container" style="display: flex; gap: 24px;">
-              <div class="web-eye"></div>
-              <div class="web-eye"></div>
-            </div>
-            <div class="expanded-content">
-              <div class="vinyl"></div>
-              <div class="music-meta">
-                <h4>Now Playing • Live Media</h4>
-                <p>Ozi - Natural Harmony (Visualizer Active)</p>
-              </div>
-              <div style="font-size: 20px;">⏸</div>
-            </div>
+  <div class="preview">
+    <div class="preview-top">
+      <div class="web-notch" id="notch" title="Hover me!">
+        <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+        <div class="exp">
+          <div class="vinyl"></div>
+          <div class="mm">
+            <h4>Now Playing • Live Media</h4>
+            <p>Ozi - Natural Harmony (Visualizer Active)</p>
           </div>
-        </div>
-        <div style="margin-top: 40px; color: var(--mist); font-size: 14px;">
-          👆 <em>Interactive Demo: Arahkan kursor Anda ke notch di atas untuk melihat respon animasinya.</em>
+          <div style="font-size:20px">⏸</div>
         </div>
       </div>
-    </section>
-
-    <section class="features" id="features">
-      <div class="section-head">
-        <h2>Dibuat Khusus untuk Windows 10 & 11</h2>
-        <p>Ringan, hemat daya (~70MB RAM), dan tidak membebani kinerja laptop atau desktop Anda.</p>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <span class="card-icon">🐾</span>
-          <h3>Living Mascot (Kyo Pet)</h3>
-          <p>Mata maskot berkedip secara periodik dan pupil matanya melacak pergerakan kursor mouse dengan lembut.</p>
-        </div>
-        <div class="card">
-          <span class="card-icon">💬</span>
-          <h3>Live Notification Sniffer</h3>
-          <p>Mendeteksi notifikasi masuk dari WhatsApp, Telegram, atau Browser secara instan lengkap dengan nama pengirim dan isi pesan.</p>
-        </div>
-        <div class="card">
-          <span class="card-icon">🎵</span>
-          <h3>Windows Media Control</h3>
-          <p>Otomatis sinkron dengan Spotify, Apple Music, YouTube di Edge/Chrome dengan visualizer equalizer 60 FPS.</p>
-        </div>
-        <div class="card">
-          <span class="card-icon">⏱</span>
-          <h3>Focus & Pomodoro</h3>
-          <p>Tingkatkan produktivitas dengan timer fokus 25 menit yang dilengkapi progress arc melingkar.</p>
-        </div>
-        <div class="card">
-          <span class="card-icon">💧</span>
-          <h3>Smart Water Reminder</h3>
-          <p>Pengingat asupan air minum harian dengan hitung mundur waktu dan penambahan satu klik.</p>
-        </div>
-        <div class="card">
-          <span class="card-icon">📁</span>
-          <h3>Quick File Shelf</h3>
-          <p>Cukup tarik dan lepas (drag-and-drop) file apa pun dari Windows Explorer langsung ke atas notch untuk akses cepat.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="support-box">
-      <h2>Dukung Pengembang Kyo Island</h2>
-      <p>Kyo Island dibuat sebagai aplikasi gratis dan open-source. Jika alat ini bermanfaat untuk produktivitas harian Anda, Anda bisa mentraktir kopi melalui Saweria.</p>
-      <a href="https://saweria.co/kyoajh" target="_blank" class="btn-saweria">
-        ☕ Dukung kyoajh di Saweria
-      </a>
-    </section>
-
-    <footer>
-      <p>© 2026 Kyo Island. Developed by <a href="https://github.com/oziajayakan" style="color:var(--emerald); text-decoration:none;">@oziajayakan</a>. Released under the MIT License.</p>
-    </footer>
+    </div>
+    <div class="hint">👆 <em>Demo interaktif: arahkan kursor ke notch di atas untuk melihat respon animasinya.</em></div>
   </div>
 
-  <script>
-    const notch = document.getElementById('interactiveNotch');
-    notch.addEventListener('click', () => {
-      notch.classList.toggle('expanded');
-    });
-  </script>
+  <section class="feat" id="fitur">
+    <h2>Enam hal kecil yang sering kamu butuhkan.</h2>
+    <div>
+      <div class="row"><small>01</small><div><h3>Pet Bar</h3><p>Karakter kecil di notch: matanya berkedip berkala dan pupilnya mengikuti kursor dengan halus.</p></div></div>
+      <div class="row"><small>02</small><div><h3>Notifikasi langsung</h3><p>Pesan dari WhatsApp, Telegram, atau browser muncul lengkap dengan nama pengirim dan isinya.</p></div></div>
+      <div class="row"><small>03</small><div><h3>Kontrol media</h3><p>Sinkron dengan Spotify, Apple Music, dan YouTube di Edge atau Chrome, dengan visualizer 60 FPS.</p></div></div>
+      <div class="row"><small>04</small><div><h3>Fokus &amp; Pomodoro</h3><p>Timer 25 menit dengan busur progres melingkar.</p></div></div>
+      <div class="row"><small>05</small><div><h3>Pengingat minum</h3><p>Hitung mundur waktu minum berikutnya, tambah satu gelas dengan sekali klik.</p></div></div>
+      <div class="row"><small>06</small><div><h3>Rak file</h3><p>Tarik file dari Explorer ke notch, ambil lagi kapan saja.</p></div></div>
+    </div>
+  </section>
+
+  <section class="support">
+    <div>
+      <h2>Kyo Island gratis, dan akan tetap begitu.</h2>
+      <p>Kalau aplikasinya membantu harimu, kamu bisa traktir kopi pengembangnya lewat Saweria.</p>
+    </div>
+    <a class="btn s" href="https://saweria.co/kyoajh" target="_blank" rel="noopener">☕ Dukung di Saweria</a>
+  </section>
+
+  <footer>
+    <span>© 2026 Kyo Island · dibuat oleh <a href="https://github.com/oziajayakan">@oziajayakan</a></span>
+    <span>Rilis di bawah lisensi MIT</span>
+  </footer>
+</div>
+
+<script>
+var notch=document.getElementById('notch');
+notch.addEventListener('click',function(){notch.classList.toggle('expanded')});
+
+var root=document.documentElement,btn=document.getElementById('theme');
+function cur(){
+  var t=root.getAttribute('data-theme');
+  if(t)return t;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+}
+function label(){btn.textContent=cur()==='dark'?'Terang':'Gelap'}
+try{var s=localStorage.getItem('kyo-theme');if(s)root.setAttribute('data-theme',s)}catch(e){}
+label();
+btn.addEventListener('click',function(){
+  var n=cur()==='dark'?'light':'dark';
+  root.setAttribute('data-theme',n);
+  try{localStorage.setItem('kyo-theme',n)}catch(e){}
+  label();
+});
+</script>
 </body>
 </html>
