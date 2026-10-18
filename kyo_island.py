@@ -28,6 +28,10 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QSystemTrayIcon, QMenu
 )
 
+import ctypes
+from ctypes import wintypes
+import psutil
+
 try:
     import winsdk.windows.media.control as wmc
     import winsdk.windows.ui.notifications.management as unm
@@ -35,6 +39,74 @@ try:
     WINSDK_AVAILABLE = True
 except Exception:
     WINSDK_AVAILABLE = False
+
+user32 = ctypes.windll.user32
+
+def scan_local_player_window():
+    """
+    Fallback pendeteksi pemutar musik lokal (AIMP, foobar2000, VLC, Winamp, PotPlayer, MPC, Windows Media Player, MusicBee, dll).
+    Membaca judul jendela aktif pemutar musik ketika aplikasi tidak mendaftarkan Windows Media Session (SMTC).
+    """
+    found = None
+    KNOWN_PLAYERS = {
+        "aimp.exe": "AIMP",
+        "foobar2000.exe": "foobar2000",
+        "vlc.exe": "VLC Media Player",
+        "winamp.exe": "Winamp",
+        "potplayermini64.exe": "PotPlayer",
+        "potplayer64.exe": "PotPlayer",
+        "potplayer.exe": "PotPlayer",
+        "mpc-hc64.exe": "MPC-HC",
+        "mpc-hc.exe": "MPC-HC",
+        "wmplayer.exe": "Windows Media Player",
+        "musicbee.exe": "MusicBee"
+    }
+
+    WNDENUMPROC = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+
+    def enum_cb(hwnd, _):
+        nonlocal found
+        if not user32.IsWindowVisible(hwnd):
+            return True
+        length = user32.GetWindowTextLengthW(hwnd)
+        if length > 0:
+            buff = ctypes.create_unicode_buffer(length + 1)
+            user32.GetWindowTextW(hwnd, buff, length + 1)
+            raw_title = buff.value.strip()
+
+            pid = wintypes.DWORD()
+            user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+            try:
+                proc = psutil.Process(pid.value)
+                pname = proc.name().lower()
+                if pname in KNOWN_PLAYERS:
+                    app_label = KNOWN_PLAYERS[pname]
+                    clean_title = raw_title
+                    for suffix in [f" - {app_label}", f" - VLC media player", " - AIMP", " - foobar2000"]:
+                        if clean_title.endswith(suffix):
+                            clean_title = clean_title[:-len(suffix)].strip()
+
+                    artist = app_label
+                    song = clean_title
+                    if " - " in clean_title:
+                        parts = clean_title.split(" - ", 1)
+                        artist = parts[0].strip()
+                        song = parts[1].strip()
+
+                    if song and song != app_label:
+                        found = {
+                            "title": song,
+                            "artist": artist,
+                            "is_playing": True,
+                            "has_media": True
+                        }
+                        return False
+            except Exception:
+                pass
+        return True
+
+    user32.EnumWindows(WNDENUMPROC(enum_cb), 0)
+    return found
 
 
 # ==============================================================================
@@ -143,7 +215,10 @@ class SystemObserverWorker(QObject):
                 except Exception:
                     pass
 
-            # 2. Deteksi Media Player (Spotify, YouTube, dll)
+            # 2. Deteksi Media Player (Spotify, YouTube, browser, dan pemutar musik lokal)
+            state = {"title": "", "artist": "", "is_playing": False, "has_media": False}
+
+            # A. Coba Windows Media Session (SMTC)
             if WINSDK_AVAILABLE:
                 try:
                     if mgr is None:
@@ -153,7 +228,17 @@ class SystemObserverWorker(QObject):
                     if not cur_session:
                         sessions = mgr.get_sessions()
                         if sessions and len(sessions) > 0:
-                            cur_session = sessions[0]
+                            # Prioritaskan sesi yang sedang berstatus PLAYING
+                            for s in sessions:
+                                try:
+                                    pb = s.get_playback_info()
+                                    if pb.playback_status == wmc.GlobalSystemMediaTransportControlsSessionPlaybackStatus.PLAYING:
+                                        cur_session = s
+                                        break
+                                except Exception:
+                                    pass
+                            if not cur_session:
+                                cur_session = sessions[0]
 
                     if cur_session:
                         self.active_session_ref = cur_session
@@ -163,23 +248,21 @@ class SystemObserverWorker(QObject):
                         title = (prop.title or "").strip()
                         artist = (prop.artist or "").strip()
 
-                        if not title and not artist:
-                            state = {"title": "", "artist": "", "is_playing": False, "has_media": False}
-                        else:
+                        if title or artist:
                             state = {
                                 "title": title if title else "Now Playing",
-                                "artist": artist if artist else "Media",
+                                "artist": artist if artist else "Media Player",
                                 "is_playing": is_playing,
                                 "has_media": True
                             }
-                    else:
-                        self.active_session_ref = None
-                        state = {"title": "", "artist": "", "is_playing": False, "has_media": False}
                 except Exception:
                     mgr = None
-                    state = {"title": "", "artist": "", "is_playing": False, "has_media": False}
-            else:
-                state = {"title": "", "artist": "", "is_playing": False, "has_media": False}
+
+            # B. Fallback Pemutar Musik Lokal (AIMP, Foobar2000, VLC, Winamp, PotPlayer, MPC, MusicBee, dll)
+            if not state.get("has_media"):
+                local_info = scan_local_player_window()
+                if local_info:
+                    state = local_info
 
             if state != self.last_media_state:
                 self.last_media_state = state
