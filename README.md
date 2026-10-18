@@ -15,12 +15,34 @@
 
 <br/>
 
-```
-  ┌────────────────────────────────────────────────────────┐
-  │         ╭───────  ●      ●  ───────╮                   │
-  │                   KYO ISLAND                           │
-  └────────────────────────────────────────────────────────┘
-```
+<img src="./sc/pet_mode.png" alt="Kyo Living Pet Mode" width="460" />
+
+*🐾 Kyo Living Mascot: Minimalis, halus, dan reaktif di bagian atas layar Windows Anda.*
+
+</div>
+
+---
+
+## 📸 Preview Galeri
+
+Berikut adalah tampilan nyata antarmuka modul Kyo Island saat aktif:
+
+| 🎵 Now Playing & Media Session | ⏱ Focus / Pomodoro Timer |
+| :---: | :---: |
+| <img src="./sc/music_mode.png" width="440" alt="Music Mode" /> | <img src="./sc/focus_mode.png" width="440" alt="Focus Mode" /> |
+| *Deteksi otomatis lagu, vinyl cover & live equalizer* | *Timer fokus 25 menit dengan circular arc progress* |
+
+| 💧 Water Reminder | 📁 Quick File Shelf |
+| :---: | :---: |
+| <img src="./sc/water_mode.png" width="440" alt="Water Reminder" /> | <img src="./sc/shelf_mode.png" width="440" alt="Quick Shelf" /> |
+| *Target hidrasi harian & tombol penambah cepat (+)* | *Drag & drop berkas apapun untuk akses cepat* |
+
+<div align="center">
+
+### ⚡ Battery & Charger HUD
+<img src="./sc/battery_mode.png" width="380" alt="Battery HUD Mode" />
+
+*Otomatis muncul sesaat saat kabel charger dicolok atau dicabut.*
 
 </div>
 
@@ -28,7 +50,7 @@
 
 ## 🌟 Overview
 
-**Kyo Island** menghadirkan pengalaman Dynamic Island modern dan elegan ke sistem operasi Windows 10 & 11. Dirancang dengan estetika bertema **"Kyo" (Natural, Cyber-Emerald & Smooth Aurora Glass)**, aplikasi ini berjalan senyap dan sangat ringan di latar belakang (*low RAM footprint ~70 MB*) tanpa membebani CPU sistem Anda.
+**Kyo Island** menghadirkan pengalaman Dynamic Island modern dan elegan ke sistem operasi Windows 10 & 11. Dirancang dengan estetika bertema **"Kyo" (Natural, Cyber-Emerald & Smooth Aurora Glass)**, aplikasi ini berjalan senyap dan sangat ringan di latar belakang (*low RAM footprint ~70 MB*) tanpa membebani kinerja CPU sistem Anda.
 
 ### ✨ Fitur Unggulan
 
@@ -99,6 +121,7 @@ pip install -r requirements.txt
 
 ```plaintext
 Dynamic-Island-Win/
+├── sc/                  # Cuplikan antarmuka & galeri preview
 ├── kyo_island.py        # Core application (PyQt6 + Windows Media & Notification Runtime)
 ├── start_island.bat     # Background silent launcher (pythonw)
 ├── requirements.txt     # Python dependencies
