@@ -248,10 +248,11 @@ class KyoIslandWidget(QWidget):
         # Shelf
         self.shelf_files = []
 
-        # Battery
+        # Battery Animation & State
         self.battery_pct = 100
         self.is_plugged = True
         self.last_plugged_state = True
+        self.charge_wave_phase = 0.0
 
         # Notification data & timer
         self.current_notif = None
@@ -318,7 +319,7 @@ class KyoIslandWidget(QWidget):
             # Melebar proporsional untuk menampilkan isi pesan notifikasi
             self.transition_to(440.0, 78.0, 24.0)
         elif new_mode == "battery":
-            self.transition_to(320.0, 56.0, 20.0)
+            self.transition_to(380.0, 68.0, 22.0)
         elif new_mode == "music":
             self.is_expanded = True
             self.transition_to(430.0, 138.0, 26.0)
@@ -340,6 +341,9 @@ class KyoIslandWidget(QWidget):
         self.eye_scale_y = 1.0
 
     def _tick(self):
+        if self.mode == "battery" or self.is_plugged:
+            self.charge_wave_phase = (self.charge_wave_phase + 0.05) % (2 * math.pi)
+
         if self.media_info.get("is_playing"):
             t = time.time() * 8.0
             for i in range(len(self.eq_bars)):
@@ -761,22 +765,74 @@ class KyoIslandWidget(QWidget):
                 painter.drawText(int(x1 + 24), int(y + 54 + idx * 20), f"📎 {name[:36]}")
 
     def _render_battery(self, painter, cx, y, w, h):
+        """Ultra-Sleek Dynamic Battery & Charging HUD with breathing animations."""
         x1 = cx - w / 2.0
-        painter.setFont(QFont("Segoe UI Variable Display", 11, QFont.Weight.DemiBold))
-        painter.setPen(QColor(245, 250, 248))
-        status = "⚡ Terhubung Charger" if self.is_plugged else "🔋 Daya Baterai"
-        painter.drawText(int(x1 + 20), int(y + 34), f"{status} {self.battery_pct}%")
 
-        bar = QRectF(cx + 36, y + 20, 95, 16)
-        painter.setPen(QPen(QColor(255, 255, 255, 45), 1.5))
-        painter.setBrush(QColor(0, 0, 0, 80))
-        painter.drawRoundedRect(bar, 4, 4)
-
-        fill_w = max(4.0, (bar.width() - 4) * (self.battery_pct / 100.0))
+        # 1. Circular Charging Emblem / Lightning Icon
+        icon_rect = QRectF(x1 + 18, y + 14, 40, 40)
+        
+        # Ambient Breathing Aura
+        pulse = (math.sin(self.charge_wave_phase * 2.0) + 1.0) / 2.0
+        aura_color = QColor(0, 245, 160, int(35 + pulse * 45)) if self.is_plugged else (
+            QColor(0, 217, 245, 30) if self.battery_pct > 20 else QColor(255, 75, 75, 50)
+        )
         painter.setPen(Qt.PenStyle.NoPen)
-        color = QColor(0, 245, 160) if self.battery_pct > 20 else QColor(240, 80, 80)
-        painter.setBrush(color)
-        painter.drawRoundedRect(QRectF(bar.x() + 2, bar.y() + 2, fill_w, bar.height() - 4), 2.5, 2.5)
+        painter.setBrush(aura_color)
+        painter.drawRoundedRect(icon_rect, 13, 13)
+
+        # Lightning / Battery Bolt Icon
+        painter.setFont(QFont("Segoe UI Variable Display", 16))
+        painter.setPen(QColor(0, 245, 160) if self.is_plugged else QColor(245, 250, 248))
+        icon_symbol = "⚡" if self.is_plugged else ("🪫" if self.battery_pct <= 20 else "🔋")
+        painter.drawText(icon_rect, Qt.AlignmentFlag.AlignCenter, icon_symbol)
+
+        # 2. Text Status & Percentage
+        painter.setFont(QFont("Segoe UI Variable Display", 11, QFont.Weight.Bold))
+        painter.setPen(QColor(245, 250, 248))
+        status_label = "MENGISI DAYA CEPAT" if self.is_plugged else "DAYA BATERAI"
+        painter.drawText(int(x1 + 68), int(y + 30), status_label)
+
+        # Subtitle Status
+        painter.setFont(QFont("Segoe UI Variable Text", 9))
+        painter.setPen(QColor(135, 165, 155))
+        sub_text = "Terhubung adaptor listrik" if self.is_plugged else (
+            "Baterai hampir habis!" if self.battery_pct <= 20 else "Mode hemat daya aktif"
+        )
+        painter.drawText(int(x1 + 68), int(y + 44), sub_text)
+
+        # 3. Big Percentage Display on Right
+        pct_str = f"{self.battery_pct}%"
+        painter.setFont(QFont("Segoe UI Variable Display", 15, QFont.Weight.ExtraBold))
+        pct_color = QColor(0, 245, 160) if self.battery_pct > 20 else QColor(255, 85, 85)
+        painter.setPen(pct_color)
+        painter.drawText(int(cx + w / 2.0 - 64), int(y + 33), pct_str)
+
+        # 4. Sleek Progress Bar Rail
+        rail_rect = QRectF(x1 + 68, y + 51, w - 86, 7)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor(255, 255, 255, 20))
+        painter.drawRoundedRect(rail_rect, 3.5, 3.5)
+
+        # Animated Gradient Fill
+        fill_width = max(6.0, rail_rect.width() * (self.battery_pct / 100.0))
+        fill_rect = QRectF(rail_rect.x(), rail_rect.y(), fill_width, rail_rect.height())
+
+        bar_gradient = QLinearGradient(fill_rect.topLeft(), fill_rect.bottomRight())
+        if self.battery_pct <= 20:
+            bar_gradient.setColorAt(0.0, QColor(255, 105, 70))
+            bar_gradient.setColorAt(1.0, QColor(255, 55, 55))
+        elif self.is_plugged:
+            # Dynamic Shimmer Effect when charging
+            shimmer_offset = (math.sin(self.charge_wave_phase) + 1.0) / 2.0
+            bar_gradient.setColorAt(0.0, QColor(0, 217, 245))
+            bar_gradient.setColorAt(max(0.05, min(0.95, shimmer_offset)), QColor(0, 245, 160))
+            bar_gradient.setColorAt(1.0, QColor(46, 220, 140))
+        else:
+            bar_gradient.setColorAt(0.0, QColor(0, 217, 245))
+            bar_gradient.setColorAt(1.0, QColor(0, 245, 160))
+
+        painter.setBrush(QBrush(bar_gradient))
+        painter.drawRoundedRect(fill_rect, 3.5, 3.5)
 
     def _render_bottom_nav(self, painter, cx, dot_y):
         modes = ["music", "pomo", "water", "shelf", "pet"]
