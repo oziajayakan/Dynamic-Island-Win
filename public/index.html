@@ -3,58 +3,61 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kyo Island: notch hidup untuk layar Windows</title>
-<meta name="description" content="Kyo Island mengubah tepi atas layar Windows jadi notch yang hidup: musik, notifikasi, timer fokus, pengingat minum, dan rak file.">
-<meta property="og:title" content="Kyo Island: notch hidup untuk layar Windows">
-<meta property="og:description" content="Musik, notifikasi langsung, timer fokus, pengingat minum, dan rak file di tepi atas layar.">
+<title>Kyo Island: notch hidup untuk Windows</title>
+<meta name="description" content="Kyo Island mengubah tepi atas layar Windows jadi notch kecil yang hidup: musik, notifikasi, timer fokus, pengingat minum, dan rak file.">
+<meta property="og:title" content="Kyo Island: notch hidup untuk Windows">
+<meta property="og:description" content="Musik, notifikasi langsung, timer fokus, pengingat minum, dan rak file di tepi atas layarmu.">
 <meta property="og:url" content="https://dynamic-island-win.vercel.app">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f4f1e8; --bg2:#e9eddf; --surface:#fbf9f3; --ink:#1d2b21; --mute:#5f6e63; --line:#d8dccb;
-  --acc:#2f7d4f; --acc-ink:#fbf9f3; --glow:rgba(47,125,79,.25);
-  --head:'Bricolage Grotesque',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --bg:#f6f5ef; --bg2:#ecefe3; --surface:#fff; --ink:#18221b; --mute:#657168; --line:#dfe3d4;
+  --acc:#2f7d4f; --acc-soft:rgba(47,125,79,.1); --acc-ink:#fff;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#1a231e; --bg2:#222d27; --surface:#202a24; --ink:#eef1e6; --mute:#9aaa9f; --line:#32403a;
-  --acc:#8fd9a2; --acc-ink:#12201a; --glow:rgba(143,217,162,.3); color-scheme:dark;}}
+  --bg:#171f1a; --bg2:#1e2822; --surface:#222d26; --ink:#eef2e8; --mute:#9aa99e; --line:#313e36;
+  --acc:#8fd9a2; --acc-soft:rgba(143,217,162,.12); --acc-ink:#12201a; color-scheme:dark;}}
 :root[data-theme="dark"]{
-  --bg:#1a231e; --bg2:#222d27; --surface:#202a24; --ink:#eef1e6; --mute:#9aaa9f; --line:#32403a;
-  --acc:#8fd9a2; --acc-ink:#12201a; --glow:rgba(143,217,162,.3); color-scheme:dark;}
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+  --bg:#171f1a; --bg2:#1e2822; --surface:#222d26; --ink:#eef2e8; --mute:#9aa99e; --line:#313e36;
+  --acc:#8fd9a2; --acc-soft:rgba(143,217,162,.12); --acc-ink:#12201a; color-scheme:dark;}
+:root{box-sizing:border-box;padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
 *,*::before,*::after{box-sizing:inherit;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--head);font-size:17px;line-height:1.6;overflow-x:hidden;transition:background .3s,color .3s}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s}
 a{color:inherit}
-.wrap{width:min(1080px,100% - 40px);margin-inline:auto}
-header{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
-.logo{font-weight:800;font-size:19px;text-decoration:none;letter-spacing:-.02em}
-.logo i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--acc);margin-right:9px}
-nav{display:flex;gap:20px;align-items:center;font-size:15px}
-nav a{text-decoration:none;color:var(--mute)}nav a:hover{color:var(--ink)}
-#theme{font:inherit;font-size:13px;font-family:var(--mono);padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.wrap{width:min(1040px,100% - 40px);margin-inline:auto}
+
+/* nav */
+.bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.bar .wrap{display:flex;justify-content:space-between;align-items:center;height:62px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;text-decoration:none;letter-spacing:-.01em}
+.logo i{width:26px;height:26px;border-radius:8px;background:#090c0f;display:grid;place-items:center}
+.logo i::before{content:"";width:8px;height:8px;border-radius:50%;background:#00f5a0;box-shadow:0 0 8px #00f5a0}
+nav{display:flex;align-items:center;gap:22px;font-size:14px}
+nav a{text-decoration:none;color:var(--mute);font-weight:500}nav a:hover{color:var(--ink)}
+#theme{font:inherit;font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 #theme:hover{border-color:var(--acc)}
 
-.hero{padding:60px 0 56px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:end}
-.tag{font-family:var(--mono);font-size:13px;color:var(--acc);margin-bottom:22px;display:block}
-h1{font-size:clamp(40px,6.2vw,80px);line-height:.98;letter-spacing:-.04em;font-weight:800}
-h1 em{font-style:normal;color:var(--acc)}
-.hero p{color:var(--mute);margin-bottom:26px;max-width:30em}
-.cta{display:flex;gap:12px;flex-wrap:wrap}
-.btn{padding:13px 22px;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--line);background:var(--surface);transition:transform .2s}
+/* hero */
+.hero{text-align:center;padding:84px 0 48px}
+.pill{display:inline-block;font-size:13px;font-weight:500;color:var(--acc);background:var(--acc-soft);padding:5px 14px;border-radius:999px;margin-bottom:22px}
+h1{font-size:clamp(40px,6.6vw,72px);line-height:1.02;letter-spacing:-.045em;font-weight:700;max-width:13ch;margin-inline:auto}
+.hero p{color:var(--mute);font-size:18px;max-width:33em;margin:20px auto 30px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--line);background:var(--surface);transition:transform .2s}
 .btn:hover{transform:translateY(-2px)}
-.btn.p{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
-.meta{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:18px}
+.btn.p{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
-/* demo (sesuai desain awal) */
-.preview{background:var(--bg2);border:1px solid var(--line);border-radius:28px;padding:40px 24px 32px;text-align:center;overflow:hidden}
+/* preview (demo asli) */
+.preview{background:var(--bg2);border:1px solid var(--line);border-radius:28px;padding:40px 24px 32px;text-align:center;overflow:hidden;margin-bottom:24px}
 .preview-top{display:flex;justify-content:center}
 .web-notch{width:180px;height:40px;background:#090c0f;border-radius:0 0 20px 20px;border-bottom:2px solid #00f5a0;
-  box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 20px rgba(0,245,160,.25);display:flex;justify-content:center;align-items:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.3),0 0 20px rgba(0,245,160,.25);display:flex;justify-content:center;align-items:center;
   cursor:pointer;transition:all .45s cubic-bezier(.34,1.3,.5,1);color:#fff}
 .eyes{display:flex;gap:24px}
 .eye{width:9px;height:15px;background:#fff;border-radius:5px;box-shadow:0 0 8px rgba(0,245,160,.8);animation:bl 3.6s infinite}
@@ -70,58 +73,77 @@ h1 em{font-style:normal;color:var(--acc)}
 .mm p{font-size:13px;color:#8fa59a}
 .hint{margin-top:36px;color:var(--mute);font-size:14px}
 
-/* fitur */
-.feat{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;padding:72px 0;border-top:1px solid var(--line);margin-top:56px}
-.feat h2{font-size:clamp(30px,4vw,46px);line-height:1.05;letter-spacing:-.03em;position:sticky;top:24px;align-self:start}
-.row{display:grid;grid-template-columns:48px 1fr;padding:22px 0;border-bottom:1px solid var(--line)}
-.row:first-child{padding-top:0}
-.row small{font-family:var(--mono);color:var(--acc);font-size:13px;padding-top:6px}
-.row h3{font-size:21px;letter-spacing:-.01em;margin-bottom:4px}
-.row p{color:var(--mute);font-size:16px}
+/* sections */
+section{padding:84px 0}
+.head{text-align:center;margin-bottom:44px}
+.head h2{font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.035em;font-weight:700}
+.head p{color:var(--mute);margin-top:10px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-3px);border-color:var(--acc)}
+.ic{width:38px;height:38px;border-radius:11px;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;font-size:18px;margin-bottom:16px}
+.card h3{font-size:17px;font-weight:600;letter-spacing:-.01em;margin-bottom:6px}
+.card p{color:var(--mute);font-size:15px;line-height:1.6}
 
-.support{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:36px;display:flex;justify-content:space-between;gap:28px;align-items:center;flex-wrap:wrap;margin-bottom:72px}
-.support h2{font-size:28px;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px}
-.support p{color:var(--mute);max-width:34em;font-size:16px}
+.pet{background:var(--bg2);border-block:1px solid var(--line)}
+.pet .head{margin-bottom:36px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.three div{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px}
+.three h3{font-size:17px;font-weight:600;margin-bottom:6px}
+.three p{color:var(--mute);font-size:15px}
+
+.band{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:56px 24px}
+.band h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.035em;line-height:1.1;margin-bottom:10px}
+.band p{color:var(--mute);max-width:30em;margin:0 auto 26px}
 .btn.s{background:#e3a008;color:#1c1608;border-color:#e3a008}
-footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mute);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+.faq{max-width:720px;margin-inline:auto}
+details{border-bottom:1px solid var(--line);padding:18px 0}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--mute);font-weight:400;font-size:20px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--mute);margin-top:10px;font-size:15px}
+
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mute);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 footer a{color:var(--ink)}
 
-@media(max-width:760px){
-  .hero,.feat{grid-template-columns:1fr;gap:28px}
-  .feat h2{position:static}
+@media(max-width:820px){
+  .grid,.three{grid-template-columns:1fr}
   nav .hide{display:none}
+  .hero{padding-top:56px}
+  section{padding:60px 0}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
+<div class="bar">
+  <div class="wrap">
     <a href="#" class="logo"><i></i>Kyo Island</a>
     <nav>
+      <a class="hide" href="#preview">Preview</a>
       <a class="hide" href="#fitur">Fitur</a>
-      <a class="hide" href="https://github.com/oziajayakan/Dynamic-Island-Win" target="_blank" rel="noopener">GitHub</a>
-      <a class="hide" href="https://saweria.co/kyoajh" target="_blank" rel="noopener">Saweria</a>
+      <a class="hide" href="#dukung">Dukung</a>
+      <a class="hide" href="#faq">FAQ</a>
       <button id="theme" type="button" aria-label="Ganti tema terang atau gelap">Gelap</button>
     </nav>
-  </header>
+  </div>
+</div>
 
-  <section class="hero">
-    <div>
-      <span class="tag">// untuk Windows 10 &amp; 11</span>
-      <h1>Tepi atas layarmu, jadi <em>hidup.</em></h1>
+<main class="wrap">
+  <div class="hero">
+    <span class="pill">Untuk Windows 10 dan 11</span>
+    <h1>Tepi atas layarmu, hidup.</h1>
+    <p>Kyo Island mengubah tepi atas Windows jadi notch kecil yang menampilkan musik, pesan masuk, timer, dan file, lalu diam-diam menyingkir saat tidak dibutuhkan.</p>
+    <div class="cta">
+      <a class="btn p" href="https://github.com/oziajayakan/Dynamic-Island-Win" target="_blank" rel="noopener">Unduh di GitHub</a>
+      <a class="btn" href="https://saweria.co/kyoajh" target="_blank" rel="noopener">Dukung via Saweria</a>
     </div>
-    <div>
-      <p>Notch kecil yang menampilkan musik, pesan masuk, timer fokus, dan rak file. Ringan, gratis, dan tidak mengganggu pekerjaanmu.</p>
-      <div class="cta">
-        <a class="btn p" href="https://github.com/oziajayakan/Dynamic-Island-Win" target="_blank" rel="noopener">Unduh di GitHub</a>
-        <a class="btn" href="https://saweria.co/kyoajh" target="_blank" rel="noopener">Dukung via Saweria</a>
-      </div>
-      <div class="meta">~70 MB RAM · open source · lisensi MIT</div>
-    </div>
-  </section>
+  </div>
 
-  <div class="preview">
+  <div class="preview" id="preview">
     <div class="preview-top">
       <div class="web-notch" id="notch" title="Hover me!">
         <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
@@ -138,51 +160,75 @@ footer a{color:var(--ink)}
     <div class="hint">👆 <em>Demo interaktif: arahkan kursor ke notch di atas untuk melihat respon animasinya.</em></div>
   </div>
 
-  <section class="feat" id="fitur">
-    <h2>Enam hal kecil yang sering kamu butuhkan.</h2>
-    <div>
-      <div class="row"><small>01</small><div><h3>Pet Bar</h3><p>Karakter kecil di notch: matanya berkedip berkala dan pupilnya mengikuti kursor dengan halus.</p></div></div>
-      <div class="row"><small>02</small><div><h3>Notifikasi langsung</h3><p>Pesan dari WhatsApp, Telegram, atau browser muncul lengkap dengan nama pengirim dan isinya.</p></div></div>
-      <div class="row"><small>03</small><div><h3>Kontrol media</h3><p>Sinkron dengan Spotify, Apple Music, dan YouTube di Edge atau Chrome, dengan visualizer 60 FPS.</p></div></div>
-      <div class="row"><small>04</small><div><h3>Fokus &amp; Pomodoro</h3><p>Timer 25 menit dengan busur progres melingkar.</p></div></div>
-      <div class="row"><small>05</small><div><h3>Pengingat minum</h3><p>Hitung mundur waktu minum berikutnya, tambah satu gelas dengan sekali klik.</p></div></div>
-      <div class="row"><small>06</small><div><h3>Rak file</h3><p>Tarik file dari Explorer ke notch, ambil lagi kapan saja.</p></div></div>
+  <section id="fitur">
+    <div class="head">
+      <h2>Semua yang kamu lirik, di satu tempat.</h2>
+      <p>Arahkan kursor ke notch untuk membukanya. Jauhkan, dan ia menutup lagi.</p>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ic">♪</div><h3>Musik dari pemutar mana saja</h3><p>Sinkron dengan Spotify, Apple Music, dan YouTube di Edge atau Chrome, lengkap dengan visualizer 60 FPS.</p></div>
+      <div class="card"><div class="ic">✉</div><h3>Notifikasi langsung</h3><p>Pesan dari WhatsApp, Telegram, atau browser muncul lengkap dengan nama pengirim dan isi pesannya.</p></div>
+      <div class="card"><div class="ic">◔</div><h3>Timer fokus</h3><p>Mulai sesi Pomodoro 25 menit dan lihat hitung mundurnya dengan busur progres melingkar.</p></div>
+      <div class="card"><div class="ic">◌</div><h3>Pengingat minum</h3><p>Atur target harian, lihat hitung mundur minum berikutnya, dan tambah satu gelas dengan sekali klik.</p></div>
+      <div class="card"><div class="ic">▤</div><h3>Rak file</h3><p>Tarik file dari Explorer ke notch untuk disimpan sementara, lalu ambil lagi kapan saja.</p></div>
+      <div class="card"><div class="ic">◉</div><h3>Pet Bar</h3><p>Sepasang mata yang berkedip berkala dan pupilnya mengikuti gerak kursormu dengan halus.</p></div>
     </div>
   </section>
+</main>
 
-  <section class="support">
-    <div>
+<div class="pet">
+  <div class="wrap">
+    <section>
+      <div class="head">
+        <h2>Teman kecil yang tidak merepotkan.</h2>
+        <p>Pet Bar membuat notch terasa hidup tanpa menambah beban untuk komputermu.</p>
+      </div>
+      <div class="three">
+        <div><h3>Ringan di PC</h3><p>Hanya sekitar 70 MB RAM, hemat daya, dan tidak membebani laptop atau desktop.</p></div>
+        <div><h3>Gratis dan open source</h3><p>Kode terbuka di GitHub dan dirilis di bawah lisensi MIT. Pakai dan bagikan sesukamu.</p></div>
+        <div><h3>Dibuat untuk Windows</h3><p>Dirancang khusus untuk Windows 10 dan 11, tampil rapi di layar laptop maupun desktop.</p></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<main class="wrap">
+  <section id="dukung">
+    <div class="band">
       <h2>Kyo Island gratis, dan akan tetap begitu.</h2>
       <p>Kalau aplikasinya membantu harimu, kamu bisa traktir kopi pengembangnya lewat Saweria.</p>
+      <a class="btn s" href="https://saweria.co/kyoajh" target="_blank" rel="noopener">☕ Dukung di Saweria</a>
     </div>
-    <a class="btn s" href="https://saweria.co/kyoajh" target="_blank" rel="noopener">☕ Dukung di Saweria</a>
   </section>
 
-  <footer>
+  <section id="faq" style="padding-top:0">
+    <div class="head"><h2>Pertanyaan umum</h2></div>
+    <div class="faq">
+      <details><summary>Apakah Kyo Island gratis?</summary><p>Ya. Kyo Island gratis dan open source di bawah lisensi MIT. Unduh dari GitHub, pakai, dan bagikan ke teman.</p></details>
+      <details><summary>Windows versi berapa yang didukung?</summary><p>Windows 10 dan Windows 11.</p></details>
+      <details><summary>Pemutar musik apa yang bisa terbaca?</summary><p>Spotify, Apple Music, dan YouTube di Edge atau Chrome, selama pemutarnya tampil di kontrol media Windows.</p></details>
+      <details><summary>Notifikasi dari aplikasi apa saja?</summary><p>Pesan dari WhatsApp, Telegram, dan browser akan muncul di notch dengan nama pengirim dan isi pesannya.</p></details>
+      <details><summary>Apakah memperlambat komputer?</summary><p>Tidak. Kyo Island memakai sekitar 70 MB RAM dan dirancang hemat daya.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
     <span>© 2026 Kyo Island · dibuat oleh <a href="https://github.com/oziajayakan">@oziajayakan</a></span>
-    <span>Rilis di bawah lisensi MIT</span>
-  </footer>
-</div>
+    <span><a href="https://github.com/oziajayakan/Dynamic-Island-Win" target="_blank" rel="noopener">GitHub</a> · Lisensi MIT</span>
+  </div>
+</footer>
 
 <script>
 var notch=document.getElementById('notch');
 notch.addEventListener('click',function(){notch.classList.toggle('expanded')});
-
 var root=document.documentElement,btn=document.getElementById('theme');
-function cur(){
-  var t=root.getAttribute('data-theme');
-  if(t)return t;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
-}
+function cur(){var t=root.getAttribute('data-theme');if(t)return t;return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}
 function label(){btn.textContent=cur()==='dark'?'Terang':'Gelap'}
 try{var s=localStorage.getItem('kyo-theme');if(s)root.setAttribute('data-theme',s)}catch(e){}
 label();
-btn.addEventListener('click',function(){
-  var n=cur()==='dark'?'light':'dark';
-  root.setAttribute('data-theme',n);
-  try{localStorage.setItem('kyo-theme',n)}catch(e){}
-  label();
-});
+btn.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('kyo-theme',n)}catch(e){}label()});
 </script>
 </body>
 </html>
