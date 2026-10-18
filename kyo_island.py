@@ -211,10 +211,10 @@ class KyoIslandWidget(QWidget):
         self.mode = "pet"
         self.is_expanded = False
 
-        # Dimensi Clean Notch
-        self._w = 170.0
-        self._h = 36.0
-        self.radius = 18.0
+        # Dimensi Clean Notch (Ultra Slim Pill agar tidak menutupi tab/minimize button aplikasi lain)
+        self._w = 140.0
+        self._h = 24.0
+        self.radius = 12.0
 
         self.anim_w = QPropertyAnimation(self, b"anim_width")
         self.anim_w.setDuration(380)
@@ -314,7 +314,7 @@ class KyoIslandWidget(QWidget):
         self.mode = new_mode
         if new_mode == "pet":
             self.is_expanded = False
-            self.transition_to(170.0, 36.0, 18.0)
+            self.transition_to(140.0, 24.0, 12.0)
         elif new_mode == "notif":
             # Melebar proporsional untuk menampilkan isi pesan notifikasi
             self.transition_to(440.0, 78.0, 24.0)
@@ -375,10 +375,11 @@ class KyoIslandWidget(QWidget):
 
     def on_notification_received(self, notif_data):
         self.current_notif = notif_data
-        if not self.is_expanded:
-            self.set_mode("notif")
-            # Tampilkan selama 6 detik agar user sempat membaca isi pesan
-            self.notif_timer.start(6000)
+        # Otomatis pop-up notifikasi kapan saja ada pesan masuk
+        self.set_mode("notif")
+        if self.parent():
+            self.parent().raise_()
+        self.notif_timer.start(6000)
 
     def _dismiss_notif(self):
         if self.mode == "notif":
@@ -398,11 +399,11 @@ class KyoIslandWidget(QWidget):
     def enterEvent(self, event):
         self.auto_hide_timer.stop()
         if self.mode == "pet":
-            self.transition_to(200.0, 40.0, 20.0)
+            self.transition_to(160.0, 28.0, 14.0)
 
     def leaveEvent(self, event):
         if self.mode == "pet":
-            self.transition_to(170.0, 36.0, 18.0)
+            self.transition_to(140.0, 24.0, 12.0)
         elif self.is_expanded:
             # Auto hidden setelah 2 detik kursor keluar
             self.auto_hide_timer.start(2000)
@@ -571,24 +572,24 @@ class KyoIslandWidget(QWidget):
         painter.restore()
 
     def _render_pet(self, painter, cx, y, w, h):
-        """Kyo Living Mascot."""
-        eye_w = 9.0
-        eye_h = 15.0 * max(0.08, self.eye_scale_y)
-        gap = 26.0
-        eye_y = y + h / 2.0 - eye_h / 2.0 + self.eye_dy
+        """Kyo Living Mascot (Ultra Slim & Elegant)."""
+        eye_w = 7.0
+        eye_h = 11.0 * max(0.1, self.eye_scale_y)
+        gap = 20.0
+        eye_y = y + h / 2.0 - eye_h / 2.0 + (self.eye_dy * 0.6)
 
         for sign in (-1, 1):
-            ex = cx + (sign * gap / 2.0) - eye_w / 2.0 + self.eye_dx
-            glow = QRadialGradient(ex + eye_w / 2.0, eye_y + eye_h / 2.0, 11)
+            ex = cx + (sign * gap / 2.0) - eye_w / 2.0 + (self.eye_dx * 0.6)
+            glow = QRadialGradient(ex + eye_w / 2.0, eye_y + eye_h / 2.0, 8)
             glow.setColorAt(0.0, QColor(0, 245, 160, 220))
             glow.setColorAt(0.65, QColor(0, 180, 140, 75))
             glow.setColorAt(1.0, QColor(0, 0, 0, 0))
             painter.setBrush(QBrush(glow))
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.drawEllipse(QRectF(ex - 6, eye_y - 6, eye_w + 12, eye_h + 12))
+            painter.drawEllipse(QRectF(ex - 4, eye_y - 4, eye_w + 8, eye_h + 8))
 
             painter.setBrush(QColor(255, 255, 255, 250))
-            painter.drawRoundedRect(QRectF(ex, eye_y, eye_w, eye_h), 4.5, 4.5)
+            painter.drawRoundedRect(QRectF(ex, eye_y, eye_w, eye_h), 3.5, 3.5)
 
     def _render_notification(self, painter, cx, y, w, h):
         """Notifikasi Super Jelas: Icon Aplikasi, Pengirim, dan Isi Pesan Lengkap."""
