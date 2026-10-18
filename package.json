@@ -1,0 +1,14 @@
+{
+  "name": "dynamic-island-win",
+  "version": "1.0.0",
+  "description": "Official landing website for Kyo Island Windows Notch",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.x"
+  }
+}
