@@ -279,6 +279,32 @@ class SystemObserverWorker(QObject):
                 pass
         threading.Thread(target=lambda: asyncio.run(_act()), daemon=True).start()
 
+    def next_track(self):
+        async def _act():
+            try:
+                if self.active_session_ref:
+                    await self.active_session_ref.try_skip_next_async()
+                else:
+                    # Fallback Windows media key VK_MEDIA_NEXT_TRACK = 0xB0
+                    user32.keybd_event(0xB0, 0, 0, 0)
+                    user32.keybd_event(0xB0, 0, 2, 0)
+            except Exception:
+                pass
+        threading.Thread(target=lambda: asyncio.run(_act()), daemon=True).start()
+
+    def prev_track(self):
+        async def _act():
+            try:
+                if self.active_session_ref:
+                    await self.active_session_ref.try_skip_previous_async()
+                else:
+                    # Fallback Windows media key VK_MEDIA_PREV_TRACK = 0xB1
+                    user32.keybd_event(0xB1, 0, 0, 0)
+                    user32.keybd_event(0xB1, 0, 2, 0)
+            except Exception:
+                pass
+        threading.Thread(target=lambda: asyncio.run(_act()), daemon=True).start()
+
 
 # ==============================================================================
 # MAIN NOTCH WIDGET
@@ -518,12 +544,27 @@ class KyoIslandWidget(QWidget):
                 self.set_mode("pomo")
             return
 
-        # 3. Kontrol di dalam mode Musik
+        # 3. Kontrol di dalam mode Musik (Prev, Play/Pause, Next)
         if self.mode == "music":
-            btn_cx = cx + 150
+            # Play / Pause
+            btn_cx = cx + 130
             btn_cy = 66
             if (pos.x() - btn_cx)**2 + (pos.y() - btn_cy)**2 <= 22**2:
                 self.observer.toggle_play_pause()
+                return
+
+            # Previous Track
+            prev_cx = cx + 85
+            prev_cy = 66
+            if (pos.x() - prev_cx)**2 + (pos.y() - prev_cy)**2 <= 18**2:
+                self.observer.prev_track()
+                return
+
+            # Next Track
+            next_cx = cx + 175
+            next_cy = 66
+            if (pos.x() - next_cx)**2 + (pos.y() - next_cy)**2 <= 18**2:
+                self.observer.next_track()
                 return
 
         # 4. Kontrol Pomodoro
@@ -725,6 +766,7 @@ class KyoIslandWidget(QWidget):
         painter.setBrush(QColor(18, 24, 28))
         painter.drawRoundedRect(art_rect, 15, 15)
 
+        # Spinning Vinyl with Ambient Glow
         vg = QLinearGradient(art_rect.topLeft(), art_rect.bottomRight())
         vg.setColorAt(0.0, QColor(0, 245, 160, 220))
         vg.setColorAt(1.0, QColor(0, 180, 245, 220))
@@ -733,30 +775,51 @@ class KyoIslandWidget(QWidget):
         painter.setBrush(QColor(10, 14, 16))
         painter.drawEllipse(QRectF(art_rect.center().x() - 6, art_rect.center().y() - 6, 12, 12))
 
+        # Title & Artist
         title = self.media_info.get("title", "") or "Tidak ada lagu diputar"
-        if len(title) > 23:
-            title = title[:21] + "..."
+        if len(title) > 20:
+            title = title[:18] + "..."
         painter.setFont(QFont("Segoe UI Variable Display", 12, QFont.Weight.Bold))
         painter.setPen(QColor(245, 250, 248))
-        painter.drawText(int(x1 + 104), int(y + 60), title)
+        painter.drawText(int(x1 + 104), int(y + 58), title)
 
-        artist = self.media_info.get("artist", "") or "Buka Spotify/Browser"
-        if len(artist) > 26:
-            artist = artist[:24] + "..."
+        artist = self.media_info.get("artist", "") or "Buka Spotify/Browser/Lokal"
+        if len(artist) > 22:
+            artist = artist[:20] + "..."
         painter.setFont(QFont("Segoe UI Variable Text", 10))
         painter.setPen(QColor(135, 165, 155))
-        painter.drawText(int(x1 + 104), int(y + 80), artist)
+        painter.drawText(int(x1 + 104), int(y + 78), artist)
 
+        # Animated Live Equalizer (10 dynamic bars with multi-color neon gradient)
         eq_x = x1 + 104
-        eq_y = y + 92
-        painter.setBrush(QColor(0, 245, 160, 240))
-        for i, val in enumerate(self.eq_bars):
-            bh = 4.0 + val * 11.0
-            painter.drawRoundedRect(QRectF(eq_x + i * 6.0, eq_y - bh, 3.5, bh), 1.7, 1.7)
-
-        btn_pos = QPointF(cx + 150, y + 66)
+        eq_y = y + 94
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(QColor(0, 245, 160, 235))
+        for i, val in enumerate(self.eq_bars):
+            bh = 4.0 + (val * 13.0 if self.media_info.get("is_playing") else 2.0)
+            bar_color = QColor(0, 245, 160) if i % 2 == 0 else QColor(0, 217, 245)
+            painter.setBrush(bar_color)
+            painter.drawRoundedRect(QRectF(eq_x + i * 5.5, eq_y - bh, 3.2, bh), 1.6, 1.6)
+
+        # --- CONTROLS: PREVIOUS (⏮), PLAY/PAUSE, NEXT (⏭) ---
+        # 1. Previous Track Button
+        prev_pos = QPointF(cx + 85, y + 66)
+        painter.setBrush(QColor(255, 255, 255, 25))
+        painter.drawEllipse(prev_pos, 16, 16)
+        
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor(240, 248, 245))
+        # Draw Prev icon: Bar + Left Triangle
+        painter.drawRect(int(prev_pos.x() - 7), int(prev_pos.y() - 5), 2, 10)
+        tri_prev = QPainterPath()
+        tri_prev.moveTo(prev_pos.x() + 5, prev_pos.y() - 5)
+        tri_prev.lineTo(prev_pos.x() - 4, prev_pos.y())
+        tri_prev.lineTo(prev_pos.x() + 5, prev_pos.y() + 5)
+        tri_prev.closeSubpath()
+        painter.fillPath(tri_prev, QColor(240, 248, 245))
+
+        # 2. Main Play / Pause Button
+        btn_pos = QPointF(cx + 130, y + 66)
+        painter.setBrush(QColor(0, 245, 160, 240))
         painter.drawEllipse(btn_pos, 22, 22)
 
         painter.setBrush(QColor(10, 14, 16))
@@ -770,6 +833,21 @@ class KyoIslandWidget(QWidget):
             tri.lineTo(btn_pos.x() - 4, btn_pos.y() + 8)
             tri.closeSubpath()
             painter.fillPath(tri, QColor(10, 14, 16))
+
+        # 3. Next Track Button
+        next_pos = QPointF(cx + 175, y + 66)
+        painter.setBrush(QColor(255, 255, 255, 25))
+        painter.drawEllipse(next_pos, 16, 16)
+
+        painter.setBrush(QColor(240, 248, 245))
+        # Draw Next icon: Right Triangle + Bar
+        painter.drawRect(int(next_pos.x() + 5), int(next_pos.y() - 5), 2, 10)
+        tri_next = QPainterPath()
+        tri_next.moveTo(next_pos.x() - 5, next_pos.y() - 5)
+        tri_next.lineTo(next_pos.x() + 4, next_pos.y())
+        tri_next.lineTo(next_pos.x() - 5, next_pos.y() + 5)
+        tri_next.closeSubpath()
+        painter.fillPath(tri_next, QColor(240, 248, 245))
 
     def _render_pomo(self, painter, cx, y, w, h):
         x1 = cx - w / 2.0
